@@ -207,7 +207,7 @@ This document provides a comprehensive overview of all ArchUnit architecture tes
 | `controllersShouldNotUseFileInputStreamDirectly` | Controllers should not use `FileInputStream` — delegate to service layer or use Spring's `Resource` abstraction |
 | `controllersShouldNotUseFileOutputStreamDirectly` | Controllers should not use `FileOutputStream` — delegate file operations to service layer |
 | `controllersShouldNotHaveMutableStaticFields` | Controllers must not have mutable static fields (excluding loggers) — controllers must be stateless |
-| `classesShouldNotCatchThrowable` | Classes should not catch `Throwable` — catch specific exception types. Compiler-generated Throwable catches from try-with-resources are automatically filtered out (⚠️ `Sw360ReleaseService` and `Sw360LicenseService` excluded pending refactoring) |
+| `classesShouldNotCatchThrowable` | Classes should not catch `Throwable` — catch specific exception types. Compiler-generated Throwable catches from try-with-resources are automatically filtered out |
 
 ---
 
@@ -294,8 +294,7 @@ Some classes are intentionally excluded from certain rules due to legacy pattern
 | `Json*Serializer` | Core-to-domain dependency | Custom serializers in `core.serializer` reference domain controllers for link building |
 | `RestControllerHelper` | Service-to-controller dependency | Helper class that bridges layers |
 | `Sw360ProjectService` | Service-to-controller dependency, Executors | Builds embedded HAL resources; uses `Executors.newFixedThreadPool()` |
-| `Sw360ReleaseService` | Catch Throwable, Executors | Uses `Executors.newSingleThreadScheduledExecutor()` for FOSSology; explicit `catch(Throwable)` |
-| `Sw360LicenseService` | Catch Throwable | Explicit `catch(Throwable)` in bulk download |
+| `Sw360ReleaseService` | Executors | Uses `Executors.newSingleThreadScheduledExecutor()` for FOSSology |
 | `ProjectController` | Gson ban | Uses Gson directly (pending refactoring to Jackson) |
 | `SW360ReportController` | Gson ban | Uses Gson directly (pending refactoring to Jackson) |
 | `ApiResponseCacheManager` | Service naming | Cache manager, not a typical service |

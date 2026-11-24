@@ -1048,13 +1048,23 @@ public class Sw360ReleaseService implements AwareOfRestServices<Release> {
     private int getAttachmentSizeInMB(Sw360AttachmentService attachmentService, String attachmentId, Release release,
             User user) throws TException {
         int attachmentSizeinBytes = 0;
-        try (ByteArrayOutputStream attachmentOutputStream = new ByteArrayOutputStream();
-                InputStream streamToAttachments = attachmentService.getStreamToAttachments(
-                        Collections.singleton(attachmentService.getAttachmentContent(attachmentId)), user, release)) {
+        InputStream streamToAttachments = null;
+        try {
+            streamToAttachments = attachmentService.getStreamToAttachments(
+                    Collections.singleton(attachmentService.getAttachmentContent(attachmentId)), user, release);
+            ByteArrayOutputStream attachmentOutputStream = new ByteArrayOutputStream();
             attachmentSizeinBytes = FileCopyUtils.copy(streamToAttachments, attachmentOutputStream);
         } catch (IOException exp) {
             log.error("Release : " + release.getId()
                     + " .Error occurred while calculation attachment size.Attachment ID : " + attachmentId);
+        } finally {
+            if (streamToAttachments != null) {
+                try {
+                    streamToAttachments.close();
+                } catch (IOException ignored) {
+                    // ignore close failures
+                }
+            }
         }
 
         return (attachmentSizeinBytes / 1024) / 1024;
